@@ -12,22 +12,30 @@ public class Evade : MonoBehaviour
     public float range = 10.0f;
 
     Rigidbody rb;
+    Rigidbody targetRb;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        targetRb = target.GetComponent<Rigidbody>();
     }
 
 
     private void FixedUpdate()
     {
-        float t = 1.0f - Steering.Attenuate(target.position, rb.position, range);
-        Vector3 steeringForce = Vector3.zero;
+        Vector3 direction = target.position - transform.position;
+        float distance = direction.magnitude;
 
-        Vector3 a = -rb.velocity;
-        Vector3 b = -Steering.Seek(target.position + target.GetComponent<Rigidbody>().velocity, rb, speed);
-        steeringForce = Vector3.Lerp(a, b, t);
+        if (distance <= range)
+        {
 
-        rb.AddForce(steeringForce);
+            Vector3 futurePos = Steering.Flee(target.position + targetRb.velocity, rb, speed);
+
+            rb.AddForce(futurePos);
+        }
+
+
+       
+
     }
 }

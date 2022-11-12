@@ -7,9 +7,9 @@ public class CatmullSpeedControl : MonoBehaviour
     public float speed = 1f;
     [Range(1, 32)]
     public int sampleRate = 16;
- 
 
 
+    int maxIndex; 
 
     [System.Serializable]
     class SamplePoint
@@ -32,6 +32,7 @@ public class CatmullSpeedControl : MonoBehaviour
     int currentIndex = 0;
     int currentSample = 0;
 
+
     private void Start()
     {
         //make sure there are 4 points, else disable the component
@@ -40,13 +41,14 @@ public class CatmullSpeedControl : MonoBehaviour
             enabled = false;
         }
 
+        
 
         int size = points.Length;
 
         //calculate the speed graph table
         for (int i = 0; i < size; ++i)
         {
-            List<SamplePoint> segment = new List<SamplePoint>();
+                List<SamplePoint> segment = new List<SamplePoint>();
 
             Vector3 p0, p1, p2, p3;
 
@@ -82,15 +84,21 @@ public class CatmullSpeedControl : MonoBehaviour
             if (++currentSample >= sampleRate)
             {
                 currentSample = 0;
-                distance = 0.0f;
+
+                currentIndex++;
                 
 
-                ++currentIndex;
-                currentIndex %= points.Length;
+            }
+            if (currentIndex >= points.Length)
+            {
+
+                distance -= accumDistance;
+                currentIndex %= points.Length;  
 
             }
 
         }
+       
 
         Vector3 p0, p1, p2, p3;
 

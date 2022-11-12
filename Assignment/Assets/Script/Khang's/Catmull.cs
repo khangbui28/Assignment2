@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Catmull : MonoBehaviour
 {
 	public Transform[] points;
@@ -42,8 +43,26 @@ public class Catmull : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        
-    }
+		int lineResolution = 64;
+		Vector3 a, b, p0, p1, p2, p3;
+		for (int i = 0; i < points.Length; i++)
+		{
+			a = points[i].position;
+			p0 = points[(points.Length + i - 1) % points.Length].position;
+			p1 = points[i].position;
+			p2 = points[(i + 1) % points.Length].position;
+			p3 = points[(i + 2) % points.Length].position;
+
+			for (int j = 1; j <= lineResolution; ++j)
+			{
+				b = Hermite(p0, p1, p2, p3, (float)j / lineResolution);
+				Gizmos.DrawLine(a, b);
+				a = b;
+			}
+
+		}
+
+	}
 	public static void IndexPosition(int i, Transform[] points, out Vector3 p0, out Vector3 p1, out Vector3 p2, out Vector3 p3)
 	{
 		int n = points.Length;
